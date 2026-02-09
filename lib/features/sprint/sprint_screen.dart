@@ -35,8 +35,8 @@ class _SprintScreenState extends State<SprintScreen> {
       });
     }
 
-    // When timer reaches 0
-    if (!sprint.isRunning && sprint.timeLeft.inSeconds == 0) {
+    // When timer reaches 0 or state becomes recovery
+    if (sprint.sessionState == SessionState.recovery) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.go('/recovery');
       });

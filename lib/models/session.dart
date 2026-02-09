@@ -1,3 +1,5 @@
+enum SessionState { focus, recovery, reflection }
+
 class Session {
   final int focusMinutes;
   final int recoveryMinutes;
