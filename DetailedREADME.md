@@ -132,3 +132,24 @@ Otium:
 - Activates DMN for recovery
 - Works completely offline
 - Uses transparent rules, not black-box AI
+
+## ⚠️ Critical Implementation Strategies (Engineered Solutions)
+
+### 1. The "Seatbelt" Overlay Challenge
+**The Challenge:** Modern OSs (especially iOS/Android 14+) restrict apps from interrupting the user or "hijacking" the screen.
+**Our Solution:**
+- **Android**: We utilize the `SYSTEM_ALERT_WINDOW` permission to display the Recovery Screen over other apps during critical overload events. (Demo Note: This permission must be manually granted).
+- **iOS**: We rely on **Critical Alerts** and Screen Time API integrations (Future Roadmap) to enforce limits respectfully.
+
+### 2. Battery Optimization vs. Silent Tracking
+**The Challenge:** OSs kill background apps to save battery, which would stop our "Daily Life" tracking.
+**Our Solution:**
+- Otium implements a lightweight **Foreground Service** with a persistent, low-priority notification. This signals to the OS: *"I am doing important regulation work, do not kill me."*
+
+### 3. The "Coping Device" Heuristic (Refined Logic)
+We don't just count taps. We use a **Time-Weighted Interaction Density** formula:
+- **Simple Taps**: Low weight (1pt).
+- **Rapid Bursts (<500ms)**: High weight (3pts) → Signals doomscrolling/panic.
+- **Context Switches**: Heavy penalty (10-20pts) → Signals fragmented attention.
+
+> *"Switching from Slack to Instagram to Email in 30 seconds is the friction we are looking for."*
