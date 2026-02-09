@@ -1,5 +1,5 @@
-import '../core/utils/persistence_service.dart';
-import '../models/user_profile.dart';
+import 'persistence_service.dart';
+import '../../models/user_profile.dart';
 
 /// Adaptive learning engine that adjusts thresholds based on observed patterns
 class AdaptationEngine {
