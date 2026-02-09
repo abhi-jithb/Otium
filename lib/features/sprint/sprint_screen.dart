@@ -43,7 +43,7 @@ class _SprintScreenState extends State<SprintScreen> {
     }
 
     return GestureDetector(
-      onTap: () => context.read<FatigueProvider>().trackInteraction(),
+      onTap: () => context.read<FatigueProvider>().incrementFriction(),
       child: FullScreenContainer(
         backgroundColor: Colors.blueGrey.shade50,
         child: Column(
