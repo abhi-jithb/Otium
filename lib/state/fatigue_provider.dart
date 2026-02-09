@@ -23,17 +23,47 @@ class FatigueProvider with ChangeNotifier {
     _checkThreshold();
   }
 
+  DateTime? _lastInteractionTime;
+
   /// Increments friction based on user interaction (taps/clicks).
+  /// Uses Time-Weighted Density: Rapid taps (<500ms) count more.
   void incrementFriction() {
-    _interactionCount++;
+    final now = DateTime.now();
+    int frictionPoints = 1;
+
+    if (_lastInteractionTime != null) {
+      final difference = now.difference(_lastInteractionTime!).inMilliseconds;
+      
+      if (difference < 500) {
+        // Rapid fire interaction (e.g. doomscrolling or panic tapping)
+        frictionPoints = 3;
+      } else if (difference < 1500) {
+        // Moderate pace
+        frictionPoints = 2;
+      }
+    }
+
+    _lastInteractionTime = now;
+    _interactionCount += frictionPoints;
     _persistence.setDailyInteractionCount(_interactionCount);
     _checkThreshold();
   }
 
   /// Specialized friction for when a user switches away from the focus app.
+  /// Context switching is the highest cost (Task Switching Penalty).
   void reportAppSwitch() {
     // App switching is heavily penalized as a sign of distraction
-    _interactionCount += 10;
+    int switchPenalty = 10;
+    
+    // Check if this is a "Rapid Switch" (e.g. within 10s of last interaction)
+    if (_lastInteractionTime != null) {
+       final difference = DateTime.now().difference(_lastInteractionTime!).inSeconds;
+       if (difference < 10) {
+         switchPenalty = 20; // Rapid context switching is fatal to focus
+       }
+    }
+    
+    _interactionCount += switchPenalty;
     _persistence.setDailyInteractionCount(_interactionCount);
     _checkThreshold();
   }
