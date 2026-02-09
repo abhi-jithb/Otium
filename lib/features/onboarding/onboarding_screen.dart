@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../state/user_provider.dart';
+import '../../state/fatigue_provider.dart';
 import '../../widgets/full_screen_container.dart';
 import '../../widgets/primary_button.dart';
 import 'role_card.dart';
@@ -17,10 +18,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   String? selectedRole;
 
   final Map<String, IconData> roles = {
-    'Student / Learner': Icons.school,
-    'Knowledge Worker': Icons.work,
-    'Creative / Builder': Icons.brush,
-    'Heavy Screen User': Icons.smartphone,
+    'Student': Icons.school,
+    'Knowledge': Icons.work,
+    'Creative': Icons.brush,
+    'Heavy': Icons.smartphone,
+  };
+
+  final Map<String, String> roleDescriptions = {
+    'Student': 'Lower threshold (30) • 60min sprints',
+    'Knowledge': 'Balanced threshold (40) • 90min sprints',
+    'Creative': 'Higher threshold (50) • Flow-optimized',
+    'Heavy': 'Adaptive threshold (25) • 45min sprints',
   };
 
   @override
@@ -35,18 +43,34 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           const SizedBox(height: 12),
           const Text(
-            'We’ll adapt the Otium experience to your biological cognitive rhythms.',
+            'This adapts your overload sensitivity to your cognitive tolerance.',
             style: TextStyle(fontSize: 16, color: Colors.grey),
           ),
           const SizedBox(height: 32),
           Expanded(
             child: ListView(
               children: roles.entries.map((entry) {
-                return RoleCard(
-                  title: entry.key,
-                  icon: entry.value,
-                  isSelected: selectedRole == entry.key,
-                  onTap: () => setState(() => selectedRole = entry.key),
+                return Column(
+                  children: [
+                    RoleCard(
+                      title: entry.key,
+                      icon: entry.value,
+                      isSelected: selectedRole == entry.key,
+                      onTap: () => setState(() => selectedRole = entry.key),
+                    ),
+                    if (selectedRole == entry.key)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16, bottom: 8),
+                        child: Text(
+                          roleDescriptions[entry.key] ?? '',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey.shade600,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                  ],
                 );
               }).toList(),
             ),
@@ -54,9 +78,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           PrimaryButton(
             label: 'Continue',
             onPressed: selectedRole == null
-                ? () {}
+                ? null
                 : () {
-                    context.read<UserProvider>().setRole(selectedRole!);
+                    final userProvider = context.read<UserProvider>();
+                    final fatigueProvider = context.read<FatigueProvider>();
+                    
+                    userProvider.setRole(selectedRole!);
+                    fatigueProvider.updateProfile(userProvider.profile);
+                    
                     context.go('/');
                   },
           ),
