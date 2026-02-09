@@ -46,9 +46,8 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // WillPopScope to prevent back button
-    return WillPopScope(
-      onWillPop: () async => _timeLeft.inSeconds == 0,
+    return PopScope(
+      canPop: _timeLeft.inSeconds == 0,
       child: FullScreenContainer(
         backgroundColor: AppColors.primary,
         child: Column(
