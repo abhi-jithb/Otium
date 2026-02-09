@@ -12,7 +12,7 @@ class AppColors {
   static const Color fatigued = Color(0xFFEF5350);
   
   // Neutral
-  static const Color background = Color(0xFFFAFAFA);
+  static const Color background = Color(0xFFFFF9F0); // Paper-like cream
   static const Color surface = Colors.white;
   static const Color textBody = Color(0xFF2C3E50);
   static const Color textDim = Color(0xFF7F8C8D);
