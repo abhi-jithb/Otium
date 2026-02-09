@@ -27,19 +27,6 @@ We use the `Provider` package to manage state across three primary domains:
 *   **`FatigueProvider`**: The core heuristic engine. It monitors "Cognitive Friction" (interaction counts, app switching) and triggers a fatigued state when thresholds are met.
 *   **`UserProvider`**: Manages user profiles and role-based personalization (Student, Knowledge Worker, Creative, Heavy User).
 
-### 2. Adaptive Cognitive Profiles
-
-**Role differentiation is NOT about identity—it's about initial cognitive tolerance.**
-
-| User Type | Interaction Threshold | Sprint Duration | Recovery Duration | Purpose |
-|-----------|----------------------|-----------------|-------------------|---------|
-| Student | 30 | 60 min | 12 min | Lower threshold for learning-focused work |
-| Knowledge Worker | 40 | 90 min | 15 min | Balanced threshold for sustained focus |
-| Creative / Builder | 50 | 90 min | 18 min | Higher threshold for flow-state work |
-| Heavy Screen User | 25 | 45 min | 10 min | Adaptive threshold for high-stimulation users |
-
-**This selection adapts overload sensitivity, not personality.**
-
 ### 3. Heuristic Logic (Overload Detection)
 Instead of complex AI models, Otium uses transparent, on-device rules:
 - **Interaction Friction**: Incremented by taps and clicks. Threshold: User-specific (25-50).
@@ -47,6 +34,21 @@ Instead of complex AI models, Otium uses transparent, on-device rules:
 - **Trigger**: Once friction > threshold, the system emits a fatigue signal, forcing an immediate transition to the `BreathingScreen`.
 
 > *"We use transparent rules, not hidden AI."*
+
+## 🧠 Usage Model: The "Seatbelt" Philosophy
+
+Otium is designed to be a **seatbelt, not a steering wheel**. You don't "use" it constantly; you only notice it when it protects you.
+
+### How it works in real life:
+1.  **Work Anywhere**: You work on your laptop, notebook, or code. You don't need to stare at Otium.
+2.  **The "Coping" Signal**: When biology breaks down, the phone becomes a coping device. We track this via **compulsive unlocks** and **rapid app switching**.
+3.  **The Intervention**: Otium appears *only* when it detects this restless friction.
+    - No notifications.
+    - No warnings.
+    - Just intervention (Recovery Screen).
+4.  **Disappear**: Once regulated (60s breathing), Otium steps back. No check-ins, no tracking charts.
+
+> *"Otium appears only when the phone becomes a coping device."*
 
 ### 4. Default Mode Network (DMN) Activation
 
