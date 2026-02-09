@@ -1,10 +1,7 @@
 # Otium: Reclaiming the Biological Capacity to Think
-> *A seatbelt for your attention span.*
+> *A biology-aligned focus and recovery system designed to restore digital sovereignty.*
 
 <div align="center">
-
-<!-- Add your demo video link or GIF here -->
-![Otium Demo](path/to/demo.gif)
 
 [![Flutter](https://img.shields.io/badge/Built_with-Flutter-02569B?style=for-the-badge&logo=flutter)](https://flutter.dev)
 [![Offline First](https://img.shields.io/badge/Architecture-Offline_First-success?style=for-the-badge)](https://github.com/abhi-jithb/Otium)
@@ -14,84 +11,106 @@
 
 ---
 
-## 🧠 The Philosophy
-Otium is not another pomodoro timer. It is a **biological regulation system** for your phone.
+## 📋 Problem Statement: The $1.3 Trillion "Negotium" Crisis
 
-Traditional apps try to squeeze *more output* from you using streaks and notifications. Otium does the opposite: it protects your **cognitive capacity** by enforcing recovery when your nervous system shows signs of overload.
+The global workforce is trapped in a cycle of **Negotium** — a state of constant, non-enjoyable digital busyness. By 2026, the boundary between human cognitive rhythms and algorithm-driven stimulation has blurred, creating a critical inflection point for technology overuse.
 
-### The "Seatbelt" Model
-You don't "use" a seatbelt constantly; you only notice it when it protects you.
-1.  **Work Anywhere**: Otium runs silently while you work.
-2.  **Coping Signal**: When you start "doomscrolling" or rapidly switching apps (coping mechanisms), Otium detects the friction.
-3.  **Intervention**: It intervenes *only* when necessary—forcing a 60-second recovery break.
-4.  **Disappear**: Once regulated, it gets out of your way.
+### The Productivity Paradox
+Despite always-on connectivity, digital distractions contribute to an estimated **$1.3 trillion in annual global productivity loss**.
 
----
+### Attention Fragmentation
+The average employee switches tasks roughly every **47 seconds** due to notifications and app interruptions. Prolonged exposure to such environments has been associated with rising attention fragmentation and ADHD-like symptoms in digitally saturated contexts.
 
-## 📱 Features
+### AI-Induced Cognitive Offloading
+Increased reliance on AI tools has accelerated "cognitive offloading," where users delegate thinking instead of engaging in it. This trend raises concerns about reduced independent problem-solving and critical-thinking endurance.
 
-### 1. Adaptive Cognitive Profiles
-Otium adapts its sensitivity based on your role, not your personality.
+### Relationship Erosion
+Nearly **1 in 4 relationships** are affected by phubbing (phone-snubbing), increasing social isolation even in moments of physical presence.
 
-| Role | Threshold | Sprint | Recovery |
-|------|-----------|--------|----------|
-| **Student** | Low (30) | 60m | 12m |
-| **Knowledge Worker** | Medium (40) | 90m | 15m |
-| **Creative** | High (50) | 90m | 18m |
-| **Heavy User** | Adaptive | 45m | 10m |
-
-### 2. Time-Weighted Friction Detection
-We don't just count taps. We measure **cognitive cost**:
-*   **Simple Tap**: 1 point
-*   **Rapid Burst (<500ms)**: 3 points (Panic/Doomscrolling)
-*   **Context Switch**: 20 points (Fragmented Attention)
-
-### 3. Default Mode Network (DMN) Activation
-When overload hits, Otium forces a **60-second breathing exercise**. This idle state activates the brain's **Default Mode Network**, essential for:
-*   Insight generation
-*   Emotional processing
-*   Memory consolidation
+**Note**: Existing solutions focus on blocking apps or tracking time — they treat symptoms, not the biological cause.
 
 ---
 
-## 📸 Screenshots
+## 💡 The Otium Solution
 
+Otium is not an app blocker. It is a **biology-aligned focus and recovery system** designed to restore digital sovereignty by syncing device usage with natural cognitive rhythms.
 
-<div align="center">
-![ss1](https://github.com/user-attachments/assets/caca5c48-606d-476b-a8a9-d6ebaa340466)
-![ss2](https://github.com/user-attachments/assets/05e72773-be64-4281-b522-f4de3d956500)
-![ss3](https://github.com/user-attachments/assets/b64411f6-2f17-4fa9-b38b-1ddb12b25be2)
+### Pillar I: Ultradian Focus Sprints (Biology-Aligned Work Cycles)
 
-</div>
+Instead of enforcing the industrial-era 8-hour workday, Otium structures work into **90–120 minute focus sprints**.
+
+**Why it works:**
+- Human cognition operates in ultradian rhythms.
+- Sustained effort beyond these cycles increases stress responses and cognitive fatigue.
+
+**MVP Implementation:**
+Otium guides users through timed focus sprints followed by intentional recovery periods, helping improve sustained attention and task completion efficiency.
+
+### Pillar II: Usage Pattern Sensing (Lightweight Digital Phenotyping)
+
+Otium detects early signs of cognitive fatigue before users slip into compulsive scrolling or burnout.
+
+**Why it works:**
+- Changes in interaction patterns — such as rapid task-switching — are strong indicators of mental overload.
+
+**MVP Implementation:**
+Instead of complex AI models, the MVP uses deterministic thresholds (e.g., rapid interaction bursts) to trigger timely micro-interventions like short breathing resets. This demonstrates adaptive behavior without over-claiming AI precision.
+
+### Pillar III: Intentional Mental Recovery (DMN-Inspired Rest)
+
+Otium protects the moments where insight happens.
+
+**Why it works:**
+- When external stimulation drops, the brain enters a reflective mode associated with memory consolidation and creative problem-solving.
+
+**MVP Implementation:**
+After each focus sprint, Otium enters a full-screen recovery mode and suggests an analog recovery ritual (e.g., stepping away from the screen, light movement, or nature viewing).
 
 ---
 
-## 🏗 Technical Architecture
+## 🏗 24-Hour MVP: Technical Setup
 
-### Offline-First & Privacy-Centric
-> *"All data stays on your device."*
+To deliver a complete and credible prototype within hackathon constraints, the MVP focuses on the **Sprint → Sense → Recover** loop while avoiding OS-level complexity.
 
-- **No Cloud**: Zero backend calls. No servers.
-- **Local Persistence**: `SharedPreferences` stores your behavioral baseline.
-- **No Login**: Install and use immediately.
+### Tech Stack
+- **Framework**: Flutter (single codebase for Android & iOS)
+- **State & Storage**: Local state + lightweight persistence
+- **Sensing Logic**: Deterministic, rule-based interaction thresholds
+- **Future Extensions**: Placeholder for HealthKit / Health Connect integration
 
-### Smart Adaptation Engine
-The app learns from yesterday to improve today:
-```dart
-// Simplified Learning Logic
-if (overloadCount > 2) {
-  // Too much strain yesterday?
-  nextSprintDuration -= 10; // Reduce load today
-} else if (overloadCount == 0) {
-  // Too easy?
-  frictionThreshold += 5; // Increase tolerance
-}
-```
+*Note: Biometric and OS-level enforcement are positioned as future extensions, not MVP claims.*
 
-### Critical Implementation Details
-*   **Overlay Permission**: Utilizes `SYSTEM_ALERT_WINDOW` (Android) to intervene over other apps.
-*   **Foreground Service**: Ensures tracking continues even when the app is "closed."
-*   **Battery Efficient**: Only wakes up on interaction events.
+---
+
+## 📱 Application Workflow
+
+### 1. Onboarding
+Users select a high-level focus profile (e.g., Student, Young Professional, Knowledge Worker).
+
+### 2. Neuro-Sprint
+- A 90-minute focus sprint begins.
+- The UI shifts to a calm, low-stimulus color palette (soft greens/blues).
+
+### 3. Passive Guard
+- The app monitors interaction patterns.
+- When overload patterns appear, a brief micro-intervention is triggered.
+
+### 4. Recovery Mode
+- At sprint completion, the app enters a full-screen recovery state.
+- Displays an analog nudge (e.g., "Step away for 15 minutes").
+
+### 5. Reclaim Dashboard
+- Users log post-recovery energy levels (1–10).
+- The dashboard visualizes:
+  - Uninterrupted focus time
+  - Recovery sessions completed
+  - Self-reported mental clarity trends
+
+---
+
+## 🎯 Hackathon Presentation Hook
+
+> "Every few seconds, our attention is interrupted. Otium doesn't track your time — **it restores your biological capacity to think.**"
 
 ---
 
