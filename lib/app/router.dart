@@ -6,19 +6,18 @@ import '../features/intervention/breathing_screen.dart';
 import '../features/recovery/recovery_screen.dart';
 import '../features/reflection/reflection_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
+import '../features/error/not_found_screen.dart';
 
 class AppRouter {
   static final router = GoRouter(
     initialLocation: '/onboarding',
+    errorBuilder: (context, state) => const NotFoundScreen(),
     routes: [
       GoRoute(
         path: '/onboarding',
         builder: (context, state) => const OnboardingScreen(),
       ),
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const HomeScreen(),
-      ),
+      GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
       GoRoute(
         path: '/sprint',
         builder: (context, state) => const SprintScreen(),

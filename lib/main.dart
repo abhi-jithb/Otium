@@ -4,14 +4,21 @@ import 'app/app.dart';
 import 'state/user_provider.dart';
 import 'state/sprint_provider.dart';
 import 'state/fatigue_provider.dart';
+import 'core/utils/persistence_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final persistenceService = await PersistenceService.init();
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider(persistenceService)),
         ChangeNotifierProvider(create: (_) => SprintProvider()),
-        ChangeNotifierProvider(create: (_) => FatigueProvider()),
+        ChangeNotifierProvider(
+          create: (_) => FatigueProvider(persistenceService),
+        ),
       ],
       child: const OtiumApp(),
     ),

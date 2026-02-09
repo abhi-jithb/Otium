@@ -40,10 +40,7 @@ class _ReflectionScreenState extends State<ReflectionScreen> {
           ),
           const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Drained'),
-              Text('Energized'),
-            ],
+            children: [Text('Drained'), Text('Energized')],
           ),
           const Spacer(),
           PrimaryButton(

@@ -13,12 +13,21 @@ class RecoveryScreen extends StatefulWidget {
 }
 
 class _RecoveryScreenState extends State<RecoveryScreen> {
+  final List<String> _nudges = [
+    'Step away from the screen',
+    'Sit quietly for 5 minutes',
+    'Light movement or nature',
+    'Hydrate and look at the horizon',
+    'Practice 5-4-3-2-1 grounding',
+  ];
+  late String _currentNudge;
   Duration _timeLeft = const Duration(minutes: 15);
   Timer? _timer;
 
   @override
   void initState() {
     super.initState();
+    _currentNudge = (List.from(_nudges)..shuffle()).first;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_timeLeft.inSeconds > 0) {
         setState(() => _timeLeft -= const Duration(seconds: 1));
@@ -37,9 +46,8 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // WillPopScope to prevent back button
-    return WillPopScope(
-      onWillPop: () async => false,
+    return PopScope(
+      canPop: _timeLeft.inSeconds == 0,
       child: FullScreenContainer(
         backgroundColor: AppColors.primary,
         child: Column(
@@ -47,18 +55,30 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
           children: [
             const Text(
               'Recovery Mode Active',
-              style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 24,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 48),
             Text(
               TimeUtils.formatDuration(_timeLeft),
-              style: const TextStyle(fontSize: 72, color: Colors.white, fontWeight: FontWeight.w200),
+              style: const TextStyle(
+                fontSize: 72,
+                color: Colors.white,
+                fontWeight: FontWeight.w200,
+              ),
             ),
             const SizedBox(height: 48),
-            const Text(
-              'Step away from the screen\nSit quietly for 5 minutes\nLight movement or nature',
+            Text(
+              _currentNudge,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18, color: Colors.white70, height: 1.5),
+              style: const TextStyle(
+                fontSize: 18,
+                color: Colors.white70,
+                height: 1.5,
+              ),
             ),
             const Spacer(),
             // No button to exit, it exits automatically
