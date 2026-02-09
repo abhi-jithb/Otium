@@ -1,4 +1,4 @@
-# Otium: Nervous System Aware Productivity
+# Otium: Reclaiming the Biological Capacity to Think
 > *A seatbelt for your attention span.*
 
 <div align="center">
@@ -56,11 +56,12 @@ When overload hits, Otium forces a **60-second breathing exercise**. This idle s
 
 ## 📸 Screenshots
 
+
 <div align="center">
-  <img src="path/to/screenshot1.png" width="200" alt="Home Screen" />
-  <img src="path/to/screenshot2.png" width="200" alt="Focus Mode" />
-  <img src="path/to/screenshot3.png" width="200" alt="Recovery Intervention" />
-  <img src="path/to/screenshot4.png" width="200" alt="Onboarding" />
+![ss1](https://github.com/user-attachments/assets/caca5c48-606d-476b-a8a9-d6ebaa340466)
+![ss2](https://github.com/user-attachments/assets/05e72773-be64-4281-b522-f4de3d956500)
+![ss3](https://github.com/user-attachments/assets/b64411f6-2f17-4fa9-b38b-1ddb12b25be2)
+
 </div>
 
 ---
@@ -120,4 +121,4 @@ if (overloadCount > 2) {
 
 ---
 
-**Built with ❤️ for cognitive preservation.**
+**Built with ❤️ for cognitive preservation by team THUDARUM**
