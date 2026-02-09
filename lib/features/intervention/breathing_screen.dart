@@ -145,17 +145,48 @@ class _BreathingScreenState extends State<BreathingScreen>
             ),
           ),
           const Spacer(),
-          PrimaryButton(
-            label: _secondsRemaining > 0
-                ? 'Wait... ($_secondsRemaining)'
-                : 'Resume Sprint',
-            onPressed: _secondsRemaining > 0
-                ? null
-                : () {
-                    context.read<FatigueProvider>().clearFatigue();
-                    context.go('/sprint');
-                  },
-          ),
+          if (_secondsRemaining > 0)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              decoration: BoxDecoration(
+                color: Colors.grey.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.withOpacity(0.2)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.grey.shade400),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Relax... $_secondsRemaining',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade600,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else
+            PrimaryButton(
+              label: 'Resume Sprint',
+              onPressed: () {
+                context.read<FatigueProvider>().clearFatigue();
+                context.go('/sprint');
+              },
+            ),
           const SizedBox(height: 40),
         ],
       ),

@@ -6,10 +6,12 @@ import '../features/intervention/breathing_screen.dart';
 import '../features/recovery/recovery_screen.dart';
 import '../features/reflection/reflection_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
+import '../features/error/not_found_screen.dart';
 
 class AppRouter {
   static final router = GoRouter(
     initialLocation: '/onboarding',
+    errorBuilder: (context, state) => const NotFoundScreen(),
     routes: [
       GoRoute(
         path: '/onboarding',
