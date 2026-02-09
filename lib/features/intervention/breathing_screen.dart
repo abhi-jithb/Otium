@@ -83,14 +83,33 @@ class _BreathingScreenState extends State<BreathingScreen>
         children: [
           const SizedBox(height: 40),
           const Text(
-            "Regulating Nervous System",
+            "Activating Default Mode Network",
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            "Cognitive overload detected",
+            style: TextStyle(fontSize: 14, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
             "Seconds remaining: $_secondsRemaining",
             style: const TextStyle(color: Colors.grey),
+          ),
+          const SizedBox(height: 8),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
+              "This idle state activates your brain's Default Mode Network—essential for recovery, insight, and emotional processing.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.black54,
+                height: 1.4,
+              ),
+            ),
           ),
           const Spacer(),
           ScaleTransition(

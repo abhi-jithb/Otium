@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import '../core/utils/persistence_service.dart';
+import '../models/user_profile.dart';
 
 class FatigueProvider with ChangeNotifier {
   final PersistenceService _persistence;
   int _interactionCount = 0;
-  final int _threshold = 40;
+  int _threshold = 40; // Default, will be updated by profile
   bool _isFatigued = false;
 
   FatigueProvider(this._persistence) {
@@ -13,6 +14,14 @@ class FatigueProvider with ChangeNotifier {
 
   int get interactionCount => _interactionCount;
   bool get isFatigued => _isFatigued;
+  int get threshold => _threshold;
+
+  /// Update threshold based on user's cognitive profile
+  void updateProfile(UserProfile profile) {
+    _threshold = profile.cognitiveProfile.interactionThreshold;
+    // Re-check threshold with new value
+    _checkThreshold();
+  }
 
   /// Increments friction based on user interaction (taps/clicks).
   void incrementFriction() {

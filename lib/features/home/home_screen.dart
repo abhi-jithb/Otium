@@ -40,6 +40,22 @@ class HomeScreen extends StatelessWidget {
             'Last recovery: 2h ago',
             style: TextStyle(color: Colors.grey.shade600),
           ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.lock_outline, size: 14, color: Colors.grey.shade500),
+              const SizedBox(width: 4),
+              Text(
+                'All data stays on your device',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey.shade500,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 32),
         ],
       ),
