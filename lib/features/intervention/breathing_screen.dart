@@ -13,7 +13,8 @@ class BreathingScreen extends StatefulWidget {
   State<BreathingScreen> createState() => _BreathingScreenState();
 }
 
-class _BreathingScreenState extends State<BreathingScreen> with SingleTickerProviderStateMixin {
+class _BreathingScreenState extends State<BreathingScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   int _secondsRemaining = 60;
@@ -28,13 +29,13 @@ class _BreathingScreenState extends State<BreathingScreen> with SingleTickerProv
       duration: const Duration(seconds: 4),
     );
 
-    _animation = Tween<double>(begin: 1.0, end: 1.5).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    _animation = Tween<double>(
+      begin: 1.0,
+      end: 1.5,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _startBreathingCycle();
-    
+
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_secondsRemaining > 0) {
         setState(() => _secondsRemaining--);
@@ -46,19 +47,23 @@ class _BreathingScreenState extends State<BreathingScreen> with SingleTickerProv
 
   void _startBreathingCycle() async {
     while (mounted) {
-      if (!mounted) break;
+      // Inhale (4s)
+      if (!mounted) return;
       setState(() => _phase = "Inhale");
       await _controller.forward();
-      
-      if (!mounted) break;
+
+      // Hold (4s)
+      if (!mounted) return;
       setState(() => _phase = "Hold");
       await Future.delayed(const Duration(seconds: 4));
-      
-      if (!mounted) break;
+
+      // Exhale (4s)
+      if (!mounted) return;
       setState(() => _phase = "Exhale");
       await _controller.reverse();
-      
-      if (!mounted) break;
+
+      // Hold (4s)
+      if (!mounted) return;
       setState(() => _phase = "Hold");
       await Future.delayed(const Duration(seconds: 4));
     }
@@ -96,30 +101,41 @@ class _BreathingScreenState extends State<BreathingScreen> with SingleTickerProv
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.blue.withOpacity(0.1),
-                border: Border.all(color: Colors.blue.withOpacity(0.5), width: 2),
+                border: Border.all(
+                  color: Colors.blue.withOpacity(0.5),
+                  width: 2,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.blue.withOpacity(0.2),
                     blurRadius: 20,
                     spreadRadius: 5,
-                  )
+                  ),
                 ],
               ),
               child: Center(
                 child: Text(
                   _phase,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.blue),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.blue,
+                  ),
                 ),
               ),
             ),
           ),
           const Spacer(),
           PrimaryButton(
-            label: _secondsRemaining > 0 ? 'Wait... ($_secondsRemaining)' : 'Resume Sprint',
-            onPressed: _secondsRemaining > 0 ? null : () {
-              context.read<FatigueProvider>().clearFatigue();
-              context.go('/sprint');
-            },
+            label: _secondsRemaining > 0
+                ? 'Wait... ($_secondsRemaining)'
+                : 'Resume Sprint',
+            onPressed: _secondsRemaining > 0
+                ? null
+                : () {
+                    context.read<FatigueProvider>().clearFatigue();
+                    context.go('/sprint');
+                  },
           ),
           const SizedBox(height: 40),
         ],

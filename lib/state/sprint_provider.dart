@@ -4,10 +4,10 @@ import '../core/constants/durations.dart';
 import '../models/session.dart';
 
 class SprintProvider with ChangeNotifier {
-  bool _isRunning = false;
-  Duration _timeLeft = AppDurations.focusSprint;
   Timer? _timer;
+  Duration _timeLeft = AppDurations.focusSprint;
   SessionState _sessionState = SessionState.focus;
+  bool _isRunning = false;
 
   bool get isRunning => _isRunning;
   Duration get timeLeft => _timeLeft;
@@ -18,6 +18,7 @@ class SprintProvider with ChangeNotifier {
     _sessionState = SessionState.focus;
     _timeLeft = AppDurations.focusSprint;
     _timer?.cancel();
+    
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_timeLeft.inSeconds > 0) {
         _timeLeft -= const Duration(seconds: 1);
@@ -47,5 +48,11 @@ class SprintProvider with ChangeNotifier {
     _timeLeft = AppDurations.focusSprint;
     _sessionState = SessionState.focus;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 }

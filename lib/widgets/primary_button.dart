@@ -16,7 +16,9 @@ class PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onPressed,
-      style: color != null ? ElevatedButton.styleFrom(backgroundColor: color) : null,
+      style: color != null
+          ? ElevatedButton.styleFrom(backgroundColor: color)
+          : null,
       child: Text(
         label,
         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

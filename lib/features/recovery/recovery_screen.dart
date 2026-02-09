@@ -56,18 +56,30 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
           children: [
             const Text(
               'Recovery Mode Active',
-              style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 24,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 48),
             Text(
               TimeUtils.formatDuration(_timeLeft),
-              style: const TextStyle(fontSize: 72, color: Colors.white, fontWeight: FontWeight.w200),
+              style: const TextStyle(
+                fontSize: 72,
+                color: Colors.white,
+                fontWeight: FontWeight.w200,
+              ),
             ),
             const SizedBox(height: 48),
             Text(
               _currentNudge,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 18, color: Colors.white70, height: 1.5),
+              style: const TextStyle(
+                fontSize: 18,
+                color: Colors.white70,
+                height: 1.5,
+              ),
             ),
             const Spacer(),
             // No button to exit, it exits automatically

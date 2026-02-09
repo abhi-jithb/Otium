@@ -4,7 +4,7 @@ import '../core/utils/persistence_service.dart';
 class FatigueProvider with ChangeNotifier {
   final PersistenceService _persistence;
   int _interactionCount = 0;
-  final int _threshold = 40; 
+  final int _threshold = 40;
   bool _isFatigued = false;
 
   FatigueProvider(this._persistence) {
@@ -24,7 +24,7 @@ class FatigueProvider with ChangeNotifier {
   /// Specialized friction for when a user switches away from the focus app.
   void reportAppSwitch() {
     // App switching is heavily penalized as a sign of distraction
-    _interactionCount += 10; 
+    _interactionCount += 10;
     _persistence.setDailyInteractionCount(_interactionCount);
     _checkThreshold();
   }

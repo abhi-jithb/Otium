@@ -14,10 +14,7 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const StateIndicator(
-            status: 'CALM',
-            color: AppColors.calm,
-          ),
+          const StateIndicator(status: 'CALM', color: AppColors.calm),
           const Spacer(),
           const Text(
             'Ready to focus?',

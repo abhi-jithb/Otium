@@ -4,17 +4,14 @@ class StateIndicator extends StatefulWidget {
   final String status;
   final Color color;
 
-  const StateIndicator({
-    super.key,
-    required this.status,
-    required this.color,
-  });
+  const StateIndicator({super.key, required this.status, required this.color});
 
   @override
   State<StateIndicator> createState() => _StateIndicatorState();
 }
 
-class _StateIndicatorState extends State<StateIndicator> with SingleTickerProviderStateMixin {
+class _StateIndicatorState extends State<StateIndicator>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -25,10 +22,10 @@ class _StateIndicatorState extends State<StateIndicator> with SingleTickerProvid
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
-    _animation = Tween<double>(begin: 0.5, end: 1.0).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    _animation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -62,7 +59,7 @@ class _StateIndicatorState extends State<StateIndicator> with SingleTickerProvid
                     color: widget.color.withOpacity(0.4),
                     blurRadius: 8,
                     spreadRadius: 2,
-                  )
+                  ),
                 ],
               ),
             ),

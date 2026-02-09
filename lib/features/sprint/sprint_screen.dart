@@ -14,14 +14,19 @@ class SprintScreen extends StatefulWidget {
   State<SprintScreen> createState() => _SprintScreenState();
 }
 
-class _SprintScreenState extends State<SprintScreen> with WidgetsBindingObserver {
+class _SprintScreenState extends State<SprintScreen>
+    with WidgetsBindingObserver {
+  bool _hasNavigated = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<SprintProvider>().startSprint();
-      context.read<FatigueProvider>().reset();
+      if (mounted) {
+        context.read<SprintProvider>().startSprint();
+        context.read<FatigueProvider>().reset();
+      }
     });
   }
 
@@ -33,9 +38,17 @@ class _SprintScreenState extends State<SprintScreen> with WidgetsBindingObserver
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      // User came back after switching away
+    if (state == AppLifecycleState.resumed && mounted) {
       context.read<FatigueProvider>().reportAppSwitch();
+    }
+  }
+
+  void _navigateIfNeeded(String route) {
+    if (!_hasNavigated && mounted) {
+      _hasNavigated = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) context.go(route);
+      });
     }
   }
 
@@ -44,22 +57,16 @@ class _SprintScreenState extends State<SprintScreen> with WidgetsBindingObserver
     final sprint = context.watch<SprintProvider>();
     final fatigue = context.watch<FatigueProvider>();
 
-    // Automated trigger for intervention when fatigued
+    // Navigation guards
     if (fatigue.isFatigued) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.go('/intervention');
-      });
-    }
-
-    // When timer reaches 0 or state becomes recovery
-    if (sprint.sessionState == SessionState.recovery) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.go('/recovery');
-      });
+      _navigateIfNeeded('/intervention');
+    } else if (sprint.sessionState == SessionState.recovery) {
+      _navigateIfNeeded('/recovery');
     }
 
     return GestureDetector(
       onTap: () => context.read<FatigueProvider>().incrementFriction(),
+      behavior: HitTestBehavior.opaque,
       child: FullScreenContainer(
         backgroundColor: Colors.blueGrey.shade50,
         child: Column(
@@ -67,14 +74,21 @@ class _SprintScreenState extends State<SprintScreen> with WidgetsBindingObserver
             const SizedBox(height: 40),
             const Text(
               'Focus sprint in progress',
-              style: TextStyle(fontSize: 18, color: Colors.blueGrey),
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.blueGrey,
+                letterSpacing: 0.5,
+              ),
             ),
             const Spacer(),
             SprintTimer(timeLeft: sprint.timeLeft),
             const Spacer(),
             Text(
               'Interactions: ${fatigue.interactionCount}',
-              style: TextStyle(color: Colors.blueGrey.withOpacity(0.5)),
+              style: TextStyle(
+                color: Colors.blueGrey.withOpacity(0.5),
+                fontSize: 14,
+              ),
             ),
             const SizedBox(height: 40),
           ],
