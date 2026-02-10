@@ -138,7 +138,7 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen>
             Row(
               children: [
                 IconButton(
-                  onPressed: () => context.go('/home'),
+                  onPressed: () => context.go('/'),
                   icon: Icon(
                     Icons.arrow_back_rounded,
                     color: Colors.grey.shade600,
