@@ -118,22 +118,35 @@ class _SplashScreenState extends State<SplashScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Spacer(flex: 3),
-            // Premium logo with organic breathing animation
+            // App logo with breathing animation
             AnimatedBuilder(
               animation: Listenable.merge([_logoController, _breathController]),
               builder: (context, child) {
                 final breathValue = _breathAnimation.value;
+                final scale = 1.0 + (breathValue * 0.05);
                 return FadeTransition(
                   opacity: _logoOpacity,
                   child: Transform.scale(
-                    scale: _logoScale.value,
-                    child: SizedBox(
-                      width: 140,
-                      height: 140,
-                      child: CustomPaint(
-                        painter: _OtiumLogoPainter(
-                          breathPhase: breathValue,
-                          primaryColor: AppColors.primary,
+                    scale: _logoScale.value * scale,
+                    child: Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withOpacity(
+                              0.15 + breathValue * 0.1,
+                            ),
+                            blurRadius: 24 + breathValue * 12,
+                            spreadRadius: 4 + breathValue * 4,
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/logo.png',
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
@@ -179,34 +192,30 @@ class _SplashScreenState extends State<SplashScreen>
               ),
             ),
             const Spacer(flex: 2),
-            // App logo with rotation animation
+            // Minimal loading dots
             FadeTransition(
               opacity: _textOpacity,
               child: AnimatedBuilder(
                 animation: _loadingController,
                 builder: (context, child) {
-                  return Transform.rotate(
-                    angle: _loadingController.value * 2 * math.pi,
-                    child: Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withOpacity(0.2),
-                            blurRadius: 12,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/logo.png',
-                          fit: BoxFit.cover,
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: List.generate(3, (index) {
+                      final delay = index * 0.2;
+                      final progress = (_loadingController.value + delay) % 1.0;
+                      final opacity = (math.sin(
+                        progress * math.pi,
+                      )).clamp(0.3, 1.0);
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.primary.withOpacity(opacity),
                         ),
-                      ),
-                    ),
+                      );
+                    }),
                   );
                 },
               ),
@@ -216,65 +225,5 @@ class _SplashScreenState extends State<SplashScreen>
         ),
       ),
     );
-  }
-}
-
-/// Custom painter for the Otium logo - organic, breathing circles
-class _OtiumLogoPainter extends CustomPainter {
-  final double breathPhase;
-  final Color primaryColor;
-
-  _OtiumLogoPainter({required this.breathPhase, required this.primaryColor});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final maxRadius = size.width / 2;
-
-    // Outer glow ring (breathes)
-    final outerRadius = maxRadius * (0.85 + breathPhase * 0.15);
-    final outerPaint = Paint()
-      ..color = primaryColor.withOpacity(0.08 + breathPhase * 0.04)
-      ..style = PaintingStyle.fill;
-    canvas.drawCircle(center, outerRadius, outerPaint);
-
-    // Middle ring
-    final middleRadius = maxRadius * (0.6 + breathPhase * 0.08);
-    final middlePaint = Paint()
-      ..color = primaryColor.withOpacity(0.15 + breathPhase * 0.05)
-      ..style = PaintingStyle.fill;
-    canvas.drawCircle(center, middleRadius, middlePaint);
-
-    // Core circle (solid, subtle shadow)
-    final coreRadius = maxRadius * 0.35;
-
-    // Shadow
-    final shadowPaint = Paint()
-      ..color = primaryColor.withOpacity(0.2)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
-    canvas.drawCircle(center.translate(0, 4), coreRadius, shadowPaint);
-
-    // Core
-    final corePaint = Paint()
-      ..shader = RadialGradient(
-        colors: [primaryColor, primaryColor.withOpacity(0.85)],
-        stops: const [0.3, 1.0],
-      ).createShader(Rect.fromCircle(center: center, radius: coreRadius));
-    canvas.drawCircle(center, coreRadius, corePaint);
-
-    // Inner highlight
-    final highlightPaint = Paint()
-      ..color = Colors.white.withOpacity(0.25)
-      ..style = PaintingStyle.fill;
-    canvas.drawCircle(
-      center.translate(-coreRadius * 0.25, -coreRadius * 0.25),
-      coreRadius * 0.2,
-      highlightPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _OtiumLogoPainter oldDelegate) {
-    return oldDelegate.breathPhase != breathPhase;
   }
 }

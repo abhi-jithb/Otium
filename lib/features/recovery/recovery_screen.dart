@@ -85,7 +85,7 @@ class _RecoveryScreenState extends State<RecoveryScreen>
     final progress = 1 - (_timeLeft.inSeconds / (15 * 60));
 
     return PopScope(
-      canPop: _timeLeft.inSeconds == 0,
+      canPop: true, // Respect autonomy - user can leave anytime
       child: Scaffold(
         body: AnimatedBuilder(
           animation: _waveController,
@@ -269,43 +269,30 @@ class _RecoveryScreenState extends State<RecoveryScreen>
                               ),
                             ),
                             const Spacer(flex: 2),
-                            // Status indicator
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                AnimatedBuilder(
-                                  animation: _pulseController,
-                                  builder: (context, child) {
-                                    return Container(
-                                      width: 8,
-                                      height: 8,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.white.withOpacity(
-                                          0.4 + _pulseAnimation.value * 0.3,
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.white.withOpacity(
-                                              0.3,
-                                            ),
-                                            blurRadius: 8,
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
+                            // Optional early exit - respects autonomy
+                            GestureDetector(
+                              onTap: () => context.go('/reflection'),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 12,
                                 ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'Recovery in progress...',
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.5),
-                                    fontSize: 14,
-                                    letterSpacing: 0.5,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(24),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.2),
                                   ),
                                 ),
-                              ],
+                                child: Text(
+                                  'Continue when ready',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.8),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),

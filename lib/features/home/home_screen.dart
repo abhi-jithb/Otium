@@ -133,40 +133,26 @@ class _HomeScreenState extends State<HomeScreen>
               position: _slideAnimation,
               child: Column(
                 children: [
-                  // Premium minimal logo mark
+                  // App logo
                   Container(
-                    width: 88,
-                    height: 88,
+                    width: 96,
+                    height: 96,
                     margin: const EdgeInsets.only(bottom: 32),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppColors.primary.withOpacity(0.06),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withOpacity(0.2),
+                          blurRadius: 20,
+                          spreadRadius: 4,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                    child: Center(
-                      child: Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.primary.withOpacity(0.12),
-                        ),
-                        child: Center(
-                          child: Container(
-                            width: 28,
-                            height: 28,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColors.primary,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.primary.withOpacity(0.3),
-                                  blurRadius: 12,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -256,7 +242,9 @@ class _HomeScreenState extends State<HomeScreen>
                                 height: 24,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: const Color(0xFFFFB300).withOpacity(0.15),
+                                  color: const Color(
+                                    0xFFFFB300,
+                                  ).withOpacity(0.15),
                                 ),
                                 child: const Center(
                                   child: Icon(
@@ -318,10 +306,7 @@ class _HomeScreenState extends State<HomeScreen>
                     decoration: BoxDecoration(
                       color: Colors.grey.shade50,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Colors.grey.shade200,
-                        width: 1,
-                      ),
+                      border: Border.all(color: Colors.grey.shade200, width: 1),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,

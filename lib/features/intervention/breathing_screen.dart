@@ -147,7 +147,7 @@ class _BreathingScreenState extends State<BreathingScreen>
               child: Column(
                 children: [
                   const Text(
-                    "Activating Default Mode Network",
+                    "Your mind needs a moment",
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w600,
@@ -157,7 +157,7 @@ class _BreathingScreenState extends State<BreathingScreen>
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Cognitive overload detected",
+                    "Let your nervous system settle",
                     style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                     textAlign: TextAlign.center,
                   ),

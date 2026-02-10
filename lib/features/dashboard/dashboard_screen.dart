@@ -59,23 +59,23 @@ class _DashboardScreenState extends State<DashboardScreen>
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.1),
+                          color: AppColors.calm.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Icon(
-                          Icons.emoji_events_outlined,
-                          color: AppColors.primary,
+                          Icons.check_circle_outline,
+                          color: AppColors.calm,
                           size: 28,
                         ),
                       ),
                       const SizedBox(width: 16),
                       const Expanded(
                         child: Text(
-                          'Great work!',
+                          'Session complete',
                           style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
+                            fontSize: 26,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.3,
                           ),
                         ),
                       ),
@@ -83,87 +83,36 @@ class _DashboardScreenState extends State<DashboardScreen>
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Your focus session is complete',
+                    'Your nervous system has been given space to regulate.',
                     style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 32),
-            // Animated stat cards
+            // Session summary - neutral state descriptions
             _AnimatedStatCard(
               delay: 0,
-              label: 'Uninterrupted Focus',
+              label: 'Time in focus state',
               value: '1.5h',
-              icon: Icons.timer_outlined,
+              icon: Icons.schedule_outlined,
               color: AppColors.primary,
             ),
             _AnimatedStatCard(
               delay: 100,
-              label: 'Recovery Sessions',
+              label: 'Recovery periods',
               value: '1',
-              icon: Icons.refresh,
+              icon: Icons.spa_outlined,
               color: AppColors.calm,
             ),
             _AnimatedStatCard(
               delay: 200,
-              label: 'Avg Clarity Score',
+              label: 'Self-reported clarity',
               value: '8/10',
-              icon: Icons.self_improvement,
+              icon: Icons.remove_red_eye_outlined,
               color: AppColors.accent,
             ),
             const Spacer(),
-            // Achievement badge
-            TweenAnimationBuilder<double>(
-              tween: Tween(begin: 0.0, end: 1.0),
-              duration: const Duration(milliseconds: 800),
-              curve: Curves.elasticOut,
-              builder: (context, value, child) {
-                return Transform.scale(
-                  scale: value,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColors.primary.withOpacity(0.8),
-                          AppColors.accent,
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withOpacity(0.3),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.local_fire_department,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'Focus streak: Day 1',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
             const SizedBox(height: 24),
             TweenAnimationBuilder<double>(
               tween: Tween(begin: 0.9, end: 1.0),
