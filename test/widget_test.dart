@@ -17,7 +17,8 @@ void main() {
         providers: [
           ChangeNotifierProvider(
               create: (_) => UserProvider(persistenceService)),
-          ChangeNotifierProvider(create: (_) => SprintProvider()),
+          ChangeNotifierProvider(
+              create: (_) => SprintProvider(persistenceService)),
           ChangeNotifierProvider(
               create: (_) => FatigueProvider(persistenceService)),
         ],

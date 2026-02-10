@@ -56,7 +56,7 @@ class _SprintTimerState extends State<SprintTimer>
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(_glowAnimation.value),
+                  color: AppColors.primary.withValues(alpha: _glowAnimation.value),
                   blurRadius: 40,
                   spreadRadius: 10,
                 ),
@@ -77,31 +77,30 @@ class _SprintTimerState extends State<SprintTimer>
                       return CircularProgressIndicator(
                         value: value,
                         strokeWidth: 8,
-                        backgroundColor: AppColors.primary.withOpacity(0.1),
+                        backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          AppColors.primary.withOpacity(0.7),
+                          AppColors.primary.withValues(alpha: 0.7),
                         ),
                         strokeCap: StrokeCap.round,
                       );
                     },
                   ),
                 ),
-                // Inner circle background
-                Container(
-                  width: 230,
-                  height: 230,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 20,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
+                  Container(
+                    width: 230,
+                    height: 230,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 20,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
                 // Timer text with smooth transitions
                 TweenAnimationBuilder<double>(
                   tween: Tween(begin: 0.9, end: 1.0),

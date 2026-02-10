@@ -9,6 +9,7 @@ import '../features/intervention/breathing_screen.dart';
 import '../features/recovery/recovery_screen.dart';
 import '../features/reflection/reflection_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
+import '../features/explanation/explanation_screen.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -195,6 +196,30 @@ class AppRouter {
               opacity: curve,
               child: ScaleTransition(
                 scale: Tween<double>(begin: 0.95, end: 1.0).animate(curve),
+                child: child,
+              ),
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: '/explanation',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const ExplanationScreen(),
+          transitionDuration: const Duration(milliseconds: 400),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            final curve = CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutCubic,
+            );
+            return FadeTransition(
+              opacity: curve,
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0.05, 0),
+                  end: Offset.zero,
+                ).animate(curve),
                 child: child,
               ),
             );

@@ -39,9 +39,9 @@ class _StateIndicatorState extends State<StateIndicator>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: widget.color.withOpacity(0.05),
+        color: widget.color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: widget.color.withOpacity(0.3), width: 1),
+        border: Border.all(color: widget.color.withValues(alpha: 0.3), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -56,7 +56,7 @@ class _StateIndicatorState extends State<StateIndicator>
                 color: widget.color,
                 boxShadow: [
                   BoxShadow(
-                    color: widget.color.withOpacity(0.4),
+                    color: widget.color.withValues(alpha: 0.4),
                     blurRadius: 8,
                     spreadRadius: 2,
                   ),

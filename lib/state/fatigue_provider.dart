@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'package:flutter/material.dart';
 import '../core/utils/persistence_service.dart';
+import '../core/utils/intervention_service.dart';
 import '../models/user_profile.dart';
 
 /// Represents a single interaction event with its weight and timestamp.
@@ -19,6 +20,20 @@ class InteractionEvent {
   bool isExpired(Duration windowDuration) {
     return DateTime.now().difference(timestamp) > windowDuration;
   }
+
+  Map<String, dynamic> toJson() => {
+    'timestamp': timestamp.toIso8601String(),
+    'weight': weight,
+    'type': type,
+  };
+
+  factory InteractionEvent.fromJson(Map<String, dynamic> json) {
+    return InteractionEvent(
+      timestamp: DateTime.parse(json['timestamp']),
+      weight: json['weight'],
+      type: json['type'],
+    );
+  }
 }
 
 /// FatigueProvider implements context-aware, weighted interaction sensing.
@@ -31,10 +46,14 @@ class InteractionEvent {
 /// Friction Weights:
 /// - Simple tap/scroll = 1 (normal interaction)
 /// - Rapid tap (<500ms) = 2 (slight agitation)
+/// - Scroll gesture = 1 per 500ms of scrolling
 /// - App switch = 3 (context break)
 /// - Rapid app switch (<10s) = 5 (cognitive fragmentation)
+///
+/// LIFECYCLE AWARE: State is persisted and restored across app restarts.
 class FatigueProvider with ChangeNotifier {
   final PersistenceService _persistence;
+  final InterventionService _interventionService = InterventionService();
 
   /// Rolling window of interaction events (60-second window)
   final Queue<InteractionEvent> _interactionWindow = Queue<InteractionEvent>();
@@ -54,7 +73,34 @@ class FatigueProvider with ChangeNotifier {
   /// Last app switch timestamp for detecting rapid context switching
   DateTime? _lastAppSwitchTime;
 
-  FatigueProvider(this._persistence);
+  /// Tracks ongoing scroll for continuous gesture detection
+  DateTime? _scrollStartTime;
+  bool _isScrolling = false;
+
+  /// Background state tracking
+  DateTime? _backgroundedAt;
+  bool _isInBackground = false;
+
+  FatigueProvider(this._persistence) {
+    _restoreState();
+  }
+
+  /// Restore state from persistence on startup
+  void _restoreState() {
+    _isFatigued = _persistence.isFatigued;
+    _threshold = _persistence.threshold ?? 40;
+
+    // Check if there's stale fatigue state from a previous session
+    final lastActive = _persistence.timeSinceLastActive;
+    if (lastActive != null && lastActive.inMinutes > 30) {
+      // If app was inactive for 30+ minutes, clear fatigue state
+      // User has likely already recovered naturally
+      _isFatigued = false;
+      _persistence.setFatigued(false);
+    }
+
+    notifyListeners();
+  }
 
   /// Current friction score (sum of weights in rolling window)
   int get frictionScore {
@@ -67,10 +113,12 @@ class FatigueProvider with ChangeNotifier {
 
   bool get isFatigued => _isFatigued;
   int get threshold => _threshold;
+  bool get isInBackground => _isInBackground;
 
   /// Update threshold based on user's cognitive profile
   void updateProfile(UserProfile profile) {
     _threshold = profile.cognitiveProfile.interactionThreshold;
+    _persistence.setThreshold(_threshold);
     _checkThreshold();
   }
 
@@ -91,6 +139,8 @@ class FatigueProvider with ChangeNotifier {
   /// Rapid tapping indicates slight agitation but is not as
   /// cognitively costly as context switching.
   void incrementFriction() {
+    if (_isInBackground) return; // Don't count interactions while backgrounded
+
     final now = DateTime.now();
     int weight = 1;
     String type = 'tap';
@@ -107,6 +157,50 @@ class FatigueProvider with ChangeNotifier {
 
     _lastInteractionTime = now;
     _addEvent(InteractionEvent(timestamp: now, weight: weight, type: type));
+    _persistence.incrementInteractionCount();
+  }
+
+  /// Records scroll start - called when user begins scrolling
+  void onScrollStart() {
+    if (_isInBackground) return;
+
+    _scrollStartTime = DateTime.now();
+    _isScrolling = true;
+  }
+
+  /// Records scroll end - calculates scroll duration and adds friction
+  ///
+  /// Weight calculation:
+  /// - 1 point per 500ms of continuous scrolling
+  /// - Max 5 points per scroll gesture (prevents runaway from long scrolls)
+  void onScrollEnd() {
+    if (!_isScrolling || _scrollStartTime == null) return;
+
+    final duration = DateTime.now().difference(_scrollStartTime!);
+    _isScrolling = false;
+    _scrollStartTime = null;
+
+    // Calculate weight based on scroll duration
+    // 1 point per 500ms, max 5 points
+    final weight = (duration.inMilliseconds / 500).clamp(1, 5).toInt();
+
+    _addEvent(
+      InteractionEvent(
+        timestamp: DateTime.now(),
+        weight: weight,
+        type: 'scroll',
+      ),
+    );
+    _persistence.incrementInteractionCount();
+  }
+
+  /// Records continuous scroll updates - for tracking scroll velocity
+  /// Called periodically during scroll
+  void onScrollUpdate() {
+    if (_isInBackground || !_isScrolling) return;
+
+    // Reset scroll start time to track continuous engagement
+    _lastInteractionTime = DateTime.now();
   }
 
   /// Records an app switch event (user left and returned to Otium).
@@ -140,6 +234,46 @@ class FatigueProvider with ChangeNotifier {
     _addEvent(InteractionEvent(timestamp: now, weight: weight, type: type));
   }
 
+  /// Called when app enters background
+  void onAppBackgrounded() {
+    _isInBackground = true;
+    _backgroundedAt = DateTime.now();
+    _persistence.setLastActiveTime(DateTime.now().toIso8601String());
+
+    // End any ongoing scroll
+    if (_isScrolling) {
+      onScrollEnd();
+    }
+
+    debugPrint('📱 App backgrounded');
+  }
+
+  /// Called when app returns to foreground
+  void onAppForegrounded() {
+    _isInBackground = false;
+
+    if (_backgroundedAt != null) {
+      final backgroundDuration = DateTime.now().difference(_backgroundedAt!);
+
+      // If user was away for more than 10 seconds, count as app switch
+      if (backgroundDuration.inSeconds > 10) {
+        reportAppSwitch();
+      }
+
+      // If user was away for more than 30 minutes, consider them recovered
+      if (backgroundDuration.inMinutes > 30 && _isFatigued) {
+        clearFatigue();
+        debugPrint(
+          '🧘 Natural recovery detected (${backgroundDuration.inMinutes}min away)',
+        );
+      }
+    }
+
+    _backgroundedAt = null;
+    _persistence.setLastActiveTime(DateTime.now().toIso8601String());
+    debugPrint('📱 App foregrounded');
+  }
+
   /// Adds an event to the rolling window and checks threshold
   void _addEvent(InteractionEvent event) {
     _pruneExpiredEvents();
@@ -150,6 +284,7 @@ class FatigueProvider with ChangeNotifier {
   /// Manual override to trigger intervention
   void triggerManualIntervention() {
     _isFatigued = true;
+    _persistence.setFatigued(true);
     _persistence.incrementOverloadEvents();
     notifyListeners();
   }
@@ -160,13 +295,30 @@ class FatigueProvider with ChangeNotifier {
 
     if (score > _threshold && !_isFatigued) {
       _isFatigued = true;
+      _persistence.setFatigued(true);
       _persistence.incrementOverloadEvents();
+      _persistence.setFrictionScore(score);
       debugPrint(
         '🛑 Cognitive overload detected! Score: $score > Threshold: $_threshold',
       );
+
+      // If app is in background, show system overlay intervention
+      if (_isInBackground) {
+        _showOverlayIntervention();
+      }
     }
 
     notifyListeners();
+  }
+
+  /// Show system overlay intervention (works over other apps)
+  Future<void> _showOverlayIntervention() async {
+    if (_interventionService.isAndroid) {
+      final shown = await _interventionService.showIntervention();
+      if (shown) {
+        debugPrint('🫁 Overlay intervention triggered over other apps');
+      }
+    }
   }
 
   /// Full reset (clears window and fatigue state)
@@ -175,17 +327,27 @@ class FatigueProvider with ChangeNotifier {
     _lastInteractionTime = null;
     _lastAppSwitchTime = null;
     _isFatigued = false;
+    _isScrolling = false;
+    _scrollStartTime = null;
+
+    _persistence.setFatigued(false);
+    _persistence.setFrictionScore(0);
+
     notifyListeners();
   }
 
   /// Soft reset after regulation (clears fatigue but keeps some history)
   void clearFatigue() {
     _isFatigued = false;
+    _persistence.setFatigued(false);
+
     // Clear half the window to give user a fresh start after recovery
     final eventsToKeep = _interactionWindow.length ~/ 2;
     while (_interactionWindow.length > eventsToKeep) {
       _interactionWindow.removeFirst();
     }
+
+    _persistence.setFrictionScore(frictionScore);
     notifyListeners();
   }
 

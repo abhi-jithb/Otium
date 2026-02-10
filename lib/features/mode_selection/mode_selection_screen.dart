@@ -134,6 +134,22 @@ class _ModeSelectionScreenState extends State<ModeSelectionScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Back button row
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () => context.go('/home'),
+                  icon: Icon(
+                    Icons.arrow_back_rounded,
+                    color: Colors.grey.shade600,
+                  ),
+                  tooltip: 'Back to Home',
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
             // Header
             const Text(
               'What are you doing\nright now?',

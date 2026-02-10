@@ -10,52 +10,71 @@ class AdaptationEngine {
   /// Check if adaptation is needed based on yesterday's data
   Future<CognitiveProfile?> checkDailyAdaptation(
       CognitiveProfile currentProfile) async {
-    final overloadCount = _persistence.overloadEventsCount;
-    final lastSprintTimestamp = _persistence.lastSprintTimestamp;
+    final today = DateTime.now().toIso8601String().substring(0, 10);
+    
+    // Prevent multiple adaptations per day
+    if (_persistence.lastAdaptationDate == today) {
+      return null;
+    }
 
     // Check if we have data from a previous day
+    // If no sprint has ever been recorded, we can't adapt
+    final lastSprintTimestamp = _persistence.lastSprintTimestamp;
     if (lastSprintTimestamp == null) return null;
 
     final lastSprint = DateTime.tryParse(lastSprintTimestamp);
     if (lastSprint == null) return null;
 
-    final daysSinceLastSprint = DateTime.now().difference(lastSprint).inDays;
+    // Check if the last sprint was indeed from a PREVIOUS day
+    // If the user just used the app today, we shouldn't adapt based on today's partial data
+    // But PersistenceService archives data ONLY when date changes.
+    // So lastDayOverloadEvents is GUARANTEED to be from the previous active day.
+    
+    // However, we want to ensure we don't adapt if the user hasn't used the app for a long time
+    // e.g. if last usage was a month ago, the archived data is stale.
+    // But for MVP, let's assume any past data is valid context.
 
-    // Only adapt if it's a new day
-    if (daysSinceLastSprint < 1) return null;
+    // Mark as adapted for today so we don't retry
+    await _persistence.setLastAdaptationDate(today);
 
-    // Adaptation Rule 1: Too many overloads → reduce sprint duration
-    if (overloadCount > 2) {
+    final prevOverloadCount = _persistence.lastDayOverloadEvents;
+    
+    // Adaptation Rule 1: frequent overload (>2) → reduce sprint duration
+    if (prevOverloadCount > 2) {
+      final newDurationMinutes = (currentProfile.sprintDuration.inMinutes - 15)
+          .clamp(30, 120);
+      
       return CognitiveProfile(
         interactionThreshold: currentProfile.interactionThreshold,
-        sprintDuration: Duration(
-          minutes: (currentProfile.sprintDuration.inMinutes - 10)
-              .clamp(30, 120),
-        ),
+        sprintDuration: Duration(minutes: newDurationMinutes),
         recoveryDuration: currentProfile.recoveryDuration,
         description:
-            'Adapted: Sprint reduced due to frequent overload (${overloadCount}x)',
+            'Adapted: Sprint reduced to ${newDurationMinutes}m due to fatigue ($prevOverloadCount overloads yesterday)',
       );
     }
 
-    // Adaptation Rule 2: No overloads → slightly increase threshold
-    if (overloadCount == 0) {
-      return CognitiveProfile(
-        interactionThreshold:
-            (currentProfile.interactionThreshold + 5).clamp(20, 60),
-        sprintDuration: currentProfile.sprintDuration,
-        recoveryDuration: currentProfile.recoveryDuration,
-        description: 'Adapted: Threshold increased (no overload detected)',
-      );
+    // Adaptation Rule 2: No overloads → slightly increase threshold (build resilience)
+    if (prevOverloadCount == 0) {
+      final newThreshold = (currentProfile.interactionThreshold + 5).clamp(20, 80);
+      
+      // Only return new profile if it actually changed
+      if (newThreshold != currentProfile.interactionThreshold) {
+        return CognitiveProfile(
+          interactionThreshold: newThreshold,
+          sprintDuration: currentProfile.sprintDuration,
+          recoveryDuration: currentProfile.recoveryDuration,
+          description: 'Adapted: Threshold +5 (Resilience building)',
+        );
+      }
     }
 
     return null; // No adaptation needed
   }
 
   /// Reset daily counters (call this after adaptation check)
+  /// DEPRECATED: PersistenceService handles this internally now
   Future<void> resetDailyCounters() async {
-    await _persistence.setDailyInteractionCount(0);
-    // Note: We keep overloadEventsCount for historical tracking
+    // No-op
   }
 
   /// Record that a sprint just completed

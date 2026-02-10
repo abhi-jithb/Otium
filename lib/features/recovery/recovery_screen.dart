@@ -121,6 +121,23 @@ class _RecoveryScreenState extends State<RecoveryScreen>
                       ),
                     );
                   }),
+
+                  // Close button at top left
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    child: SafeArea(
+                      child: IconButton(
+                        onPressed: () => context.go('/reflection'),
+                        icon: Icon(
+                          Icons.close_rounded,
+                          color: Colors.white.withOpacity(0.8),
+                        ),
+                        tooltip: 'Skip Recovery',
+                      ),
+                    ),
+                  ),
+
                   // Main content
                   SafeArea(
                     child: Padding(

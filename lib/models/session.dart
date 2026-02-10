@@ -1,5 +1,6 @@
 /// Session states with explicit naming for cognitive clarity
 enum SessionState {
+  idle,        // No active session
   focus,       // Active work state
   recovery,    // DMN activation / forced idle
   reflection,  // Post-session review
@@ -10,6 +11,8 @@ enum SessionState {
 extension SessionStateDescription on SessionState {
   String get description {
     switch (this) {
+      case SessionState.idle:
+        return 'Ready to Start';
       case SessionState.focus:
         return 'Active Focus';
       case SessionState.recovery:
