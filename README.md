@@ -31,7 +31,7 @@ Nearly **1 in 4 relationships** are affected by phubbing (phone-snubbing), incre
 
 ---
 
-## 💡 The Otium Solution
+## The Otium Solution
 
 Otium is not an app blocker. It is a **biology-aligned focus and recovery system** designed to restore digital sovereignty by syncing device usage with natural cognitive rhythms.
 
