@@ -19,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _breathController;
   late AnimationController _textController;
   late AnimationController _loadingController;
-  
+
   late Animation<double> _logoScale;
   late Animation<double> _logoOpacity;
   late Animation<double> _breathAnimation;
@@ -55,10 +55,7 @@ class _SplashScreenState extends State<SplashScreen>
     )..repeat();
 
     _logoScale = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _logoController,
-        curve: Curves.easeOutBack,
-      ),
+      CurvedAnimation(parent: _logoController, curve: Curves.easeOutBack),
     );
 
     _logoOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -69,28 +66,18 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _breathAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _breathController,
-        curve: Curves.easeInOutSine,
-      ),
+      CurvedAnimation(parent: _breathController, curve: Curves.easeInOutSine),
     );
 
-    _textOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _textController,
-        curve: Curves.easeOut,
-      ),
-    );
+    _textOpacity = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _textController, curve: Curves.easeOut));
 
-    _textSlide = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _textController,
-        curve: Curves.easeOutCubic,
-      ),
-    );
+    _textSlide = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero)
+        .animate(
+          CurvedAnimation(parent: _textController, curve: Curves.easeOutCubic),
+        );
 
     // Staggered animation sequence
     _logoController.forward();
@@ -192,19 +179,32 @@ class _SplashScreenState extends State<SplashScreen>
               ),
             ),
             const Spacer(flex: 2),
-            // Minimal loading indicator
+            // App logo with rotation animation
             FadeTransition(
               opacity: _textOpacity,
               child: AnimatedBuilder(
                 animation: _loadingController,
                 builder: (context, child) {
-                  return SizedBox(
-                    width: 32,
-                    height: 32,
-                    child: CustomPaint(
-                      painter: _MinimalLoadingPainter(
-                        progress: _loadingController.value,
-                        color: AppColors.primary,
+                  return Transform.rotate(
+                    angle: _loadingController.value * 2 * math.pi,
+                    child: Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withOpacity(0.2),
+                            blurRadius: 12,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/logo.png',
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   );
@@ -224,10 +224,7 @@ class _OtiumLogoPainter extends CustomPainter {
   final double breathPhase;
   final Color primaryColor;
 
-  _OtiumLogoPainter({
-    required this.breathPhase,
-    required this.primaryColor,
-  });
+  _OtiumLogoPainter({required this.breathPhase, required this.primaryColor});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -250,20 +247,17 @@ class _OtiumLogoPainter extends CustomPainter {
 
     // Core circle (solid, subtle shadow)
     final coreRadius = maxRadius * 0.35;
-    
+
     // Shadow
     final shadowPaint = Paint()
       ..color = primaryColor.withOpacity(0.2)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
     canvas.drawCircle(center.translate(0, 4), coreRadius, shadowPaint);
-    
+
     // Core
     final corePaint = Paint()
       ..shader = RadialGradient(
-        colors: [
-          primaryColor,
-          primaryColor.withOpacity(0.85),
-        ],
+        colors: [primaryColor, primaryColor.withOpacity(0.85)],
         stops: const [0.3, 1.0],
       ).createShader(Rect.fromCircle(center: center, radius: coreRadius));
     canvas.drawCircle(center, coreRadius, corePaint);
@@ -282,53 +276,5 @@ class _OtiumLogoPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _OtiumLogoPainter oldDelegate) {
     return oldDelegate.breathPhase != breathPhase;
-  }
-}
-
-/// Minimal arc loading indicator
-class _MinimalLoadingPainter extends CustomPainter {
-  final double progress;
-  final Color color;
-
-  _MinimalLoadingPainter({
-    required this.progress,
-    required this.color,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2 - 2;
-
-    // Background track
-    final trackPaint = Paint()
-      ..color = color.withOpacity(0.1)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2
-      ..strokeCap = StrokeCap.round;
-    canvas.drawCircle(center, radius, trackPaint);
-
-    // Animated arc
-    final arcPaint = Paint()
-      ..color = color.withOpacity(0.6)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2
-      ..strokeCap = StrokeCap.round;
-
-    final startAngle = progress * 2 * math.pi - math.pi / 2;
-    final sweepAngle = math.pi * 0.7;
-
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      startAngle,
-      sweepAngle,
-      false,
-      arcPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _MinimalLoadingPainter oldDelegate) {
-    return oldDelegate.progress != progress;
   }
 }
